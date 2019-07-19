@@ -20,5 +20,6 @@ use Illuminate\Http\Request;
 // RESTful API routes
 Route::get('/', 'APIsController@index');
 Route::post('login', 'APIsController@login');
+Route::post('register', 'APIsController@register');
 
 

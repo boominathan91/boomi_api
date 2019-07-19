@@ -113,5 +113,45 @@ class APIsController extends Controller
  }
 }
 
+ /**
+     * Handles Registration Request
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function register(Request $request) {
+
+        try {
+            $validator = Validator::make($request->all(),
+                            [
+                                'name' => 'required',                                
+                                'email' => 'required|email|unique:users',
+                                'password' => 'required|min:6|max:18',
+                                'mobile' => 'required|unique:users'                                
+                            ]
+            );
+
+            if (!$validator->fails()) {
+                $user = new User();
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->mobile = $request->mobile;
+                $user->password = Hash::make($request->password);
+                $user->save();      
+
+
+                $data = [
+                    'message' => 'Registered successfully.'
+                ];
+
+                return Helper::send_success_response($data);
+            } else {
+                return Helper::send_input_error_response($validator->messages()->first());
+            }
+        } catch (Exception | Throwable $ex) {
+            Helper::send_exception_response('Error: ' . $ex->getMessage() . ' Line Number: ' . $ex->getLine());
+        }
+    }
+
 
 }
